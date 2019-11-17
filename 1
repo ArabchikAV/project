@@ -1,0 +1,297 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+
+namespace Lab8_LP_
+{
+    class Program
+    {
+        public class students
+        {
+            public string last_name;
+            public string first_name;
+            public students(string a, string b)//используется для добавления нового студента 
+            {
+                last_name = a;
+                first_name = b;
+            }
+        }
+        public class func
+        {
+            public void completion(int var, students[] studs, int kol_studs, int[][][] labs, int kol_labs, int[] kol_zadan)
+            {
+                if (var == 1)//заполнение информации в ручную 
+                {
+                    for (int n = 0; n < kol_studs; n++)
+                    {
+                        Console.WriteLine("" + studs[n].last_name + ' ' + studs[n].first_name);
+                        for (int i = 0; i < kol_labs; i++)
+                        {
+                            for (int j = 0; j < kol_zadan[i]; j++)
+                            {
+                                do
+                                {
+                                    Console.Write("Лаб №{0} задание №{1}: ", i + 1, j + 1);
+                                    labs[n][i][j] = Int32.Parse(Console.ReadLine());
+                                } while (labs[n][i][j] < 1 || labs[n][i][j] > 4);
+                            }
+                            Console.WriteLine("");
+                        }
+                    }
+                }
+                else//считывание всей информации из файлов
+                {
+                    string file3 = @"E:\un\2year1cem\ЯП\C#\лаба 8\\8_info.txt";
+                    BinaryReader reader = new BinaryReader(File.Open(file3, FileMode.Open));
+                    for (int n = 0; n < kol_studs; n++)
+                    {
+                        Console.WriteLine("" + studs[n].last_name + ' ' + studs[n].first_name);
+                        for (int i = 0; i < kol_labs; i++)
+                        {
+                            Console.Write("Лаб №{0}:", i + 1);
+                            for (int j = 0; j < kol_zadan[i]; j++)
+                            {
+                                labs[n][i][j] = reader.ReadInt32();
+                                Console.Write(" " + labs[n][i][j]);
+                            }
+                            Console.WriteLine("");
+                        }
+                        Console.WriteLine("");
+
+                    }
+                    reader.Close();
+
+                }
+            } 
+            public void list_of_studs(students[] studs, int kol_studs)//вывод списка студентов
+            {
+                Console.WriteLine("Список студентов: ");
+                for (int q = 0; q < kol_studs; q++)
+                {
+                    Console.WriteLine("№{0} - {1} {2}", q + 1, studs[q].last_name, studs[q].first_name);
+                }
+            }                //Список полностью сданных лабораторных работ отдельного студента
+            public void list_full_labs(int[][][] labs, int kol_labs, int[] kol_zadan)
+            {
+                Console.Write("Введите номер студента в списке(начиная с 1): ");
+                int n = Int32.Parse(Console.ReadLine()); n--;
+                int m = 0;
+                for (int i = 0; i < kol_labs; i++)
+                {
+                    int k = 0;
+                    for (int j = 0; j < kol_zadan[i]; j++)
+                    {
+                        if (labs[n][i][j] >= 3) k++;
+                    }
+                    if (k == kol_zadan[i]) { Console.WriteLine("Лабoраторная №{0} сдана полностью", i + 1); m++; }
+                }
+                if (m < 1) Console.WriteLine("Нет полностью сданных лабoраторных");
+            }                   //Таблица успеваемости отдельного студента
+            public void table_of_progress(int[][][] labs, int kol_labs, int[] kol_zadan)
+            {
+                Console.Write("Введите номер студента в списке(начиная с 1): ");
+                int n = Int32.Parse(Console.ReadLine()); n--;
+                for (int i = 0; i < kol_labs; i++)
+                {
+                    Console.Write("Лабoраторная №{0} |", i + 1);
+                    for (int j = 0; j < kol_zadan[i]; j++)
+                    {
+                        Console.Write("\t" + labs[n][i][j]);
+                    }
+                    Console.WriteLine("");
+                }
+            }                          //Изменить информацию о студенте
+            public void edit(int[][][] labs, int kol_labs, int[] kol_zadan)
+            {
+                Console.Write("Введите номер студента в списке(начиная с 1): ");
+                int n = Int32.Parse(Console.ReadLine()); n--;
+                for (int i = 0; i < kol_labs; i++)
+                {
+                    for (int j = 0; j < kol_zadan[i]; j++)
+                    {
+                        do
+                        {
+                            Console.Write("Лаб №{0} задание №{1}: ", i + 1, j + 1);
+                            labs[n][i][j] = Int32.Parse(Console.ReadLine());
+                        } while (labs[n][i][j] < 1 || labs[n][i][j] > 4);
+                    }
+                    Console.WriteLine("");
+                }
+                Console.WriteLine("Информация изменена успешно");
+            }                 //Изменить оценку за задание у отдельного студента
+            public void edit_zadan(int[][][] labs, int kol_studs, int kol_labs, int[] kol_zadan)
+            {
+                int n, m, l;
+                do
+                {
+                    Console.Write("Введите номер студента в списке(начиная с 1): ");
+                    n = Int32.Parse(Console.ReadLine()); n--;
+                } while (n >= kol_studs || n < 0);
+                do
+                {
+                    Console.Write("Введите номер лабораторной(начиная с 1): ");
+                    m = Int32.Parse(Console.ReadLine()); m--;
+                } while (m >= kol_labs || m < 0);
+                do
+                {
+                    Console.Write("Введите номер задания(начиная с 1): ");
+                    l = Int32.Parse(Console.ReadLine()); l--;
+                } while (l >= kol_zadan[m] || l < 0);
+                do
+                {
+                    Console.Write("Введите оценку(от 1 до 4): ");
+                    labs[n][m][l] = Int32.Parse(Console.ReadLine());
+                } while (labs[n][m][l] > 4 || labs[n][m][l] <= 0);
+                Console.WriteLine("Информация изменена успешно");
+            }                           //Сохранить информацию о студентах в файл
+            public void save(int[][][] labs, int kol_studs, int kol_labs, int[] kol_zadan)
+            {
+                string file = @"E:\un\2year1cem\ЯП\C#\лаба 8\\8_info.txt";
+                BinaryWriter writer = new BinaryWriter(File.Open(file, FileMode.Truncate));
+                for (int n = 0; n < kol_studs; n++)
+                {
+                    for (int i = 0; i < kol_labs; i++)
+                    {
+                        for (int j = 0; j < kol_zadan[i]; j++)
+                        {
+                            writer.Write(labs[n][i][j]);
+                        }
+                    }
+                }
+                writer.Close();
+                Console.WriteLine("Успешно сохранено");
+            }                               //Добавление студента
+            public void add_stud(students[] studs, int kol_studs, int[][][] labs, int kol_labs, int[] kol_zadan)
+            {
+                labs[kol_studs] = new int[kol_labs][];
+                for (int i = 0; i < kol_labs; i++)
+                {
+                    labs[kol_studs][i] = new int[kol_zadan[i]];
+                }
+                for (int i = 0; i < kol_labs; i++)
+                {
+                    for (int j = 0; j < kol_zadan[i]; j++)
+                    {
+                        labs[kol_studs][i][j] = 0;
+                    }
+                }
+                Console.Write("Введите Фамиилию и Имя нового студента: ");
+                string a = Console.ReadLine();
+                string b = Console.ReadLine();
+                studs[kol_studs] = new students(a, b);
+                Console.WriteLine("Студент {0} {1} успешно добавлен", studs[kol_studs].last_name, studs[kol_studs].first_name);
+            }
+        }
+        static void Main(string[] args)
+        {
+
+            string file1 = @"E:\un\2year1cem\ЯП\C#\лаба 8\\8_labs.txt";
+            string file2 = @"E:\un\2year1cem\ЯП\C#\лаба 8\\8_students.txt";
+            int kol_studs = 0;
+            BinaryReader reader1 = new BinaryReader(File.Open(file2, FileMode.Open));
+            Console.WriteLine("Студенты: ");
+            while (reader1.PeekChar() > -1)
+            {
+                string a = reader1.ReadString();
+                string b = reader1.ReadString();
+                Console.WriteLine("" + a + ' ' + b);
+                kol_studs++;
+            }
+            int kol_studs_in_file = kol_studs;
+            students[] studs = new students[kol_studs];
+            reader1.Close();
+            reader1 = new BinaryReader(File.Open(file2, FileMode.Open));
+            for (int q = 0; reader1.PeekChar() > -1; q++)
+            {
+                string a = reader1.ReadString();
+                string b = reader1.ReadString();
+                studs[q] = new students(a, b);
+            }
+            reader1.Close();
+
+            StreamReader reader3 = new StreamReader(file1);
+            string str = reader3.ReadLine();
+            int kol_labs = Convert.ToInt32(str);
+            int[][][] labs = new int[kol_studs][][];
+            for (int i = 0; i < kol_studs; i++)
+            {
+                labs[i] = new int[kol_labs][];
+            }
+            Console.WriteLine("Количество лабoраторных: " + kol_labs);
+            str = reader3.ReadLine();
+            int[] kol_zadan = new int[kol_labs];
+            for (int i = 0, j, k = 0; i < str.Length; i++)
+            {
+                string kol_zadanii = "";
+                for (j = i; j < str.Length; j++)
+                {
+                    if (str[j] == ',') break;
+                    kol_zadanii += str[j];
+                }
+                i = j;
+                kol_zadan[k] = Convert.ToInt32(kol_zadanii);
+                for (int q = 0; q < kol_studs; q++)
+                {
+                    labs[q][k] = new int[kol_zadan[k]];
+                }
+                Console.WriteLine("Заданий в лабараторной №{0} = {1}", k + 1, kol_zadan[k]);
+                k++;
+            }
+            reader3.Close();
+            Console.Write("Хотите заполнить информацию о сданных работах в ручную или восстановить из файла?\n    Введите 1, если в ручную, или 2, если с файла: ");
+            int var = Int32.Parse(Console.ReadLine());
+            func function = new func();
+            function.completion(var, studs, kol_studs, labs, kol_labs, kol_zadan);
+            bool flag = true;
+            do
+            {
+                Console.Write("Введите номер команды(для просмотра команд, введите 1): ");
+                var = Int32.Parse(Console.ReadLine());
+                if (var == 1)
+                    Console.WriteLine("1. Просмотр команд\n" +
+                        "2. Список студентов\n" +
+                        "3. Список полностью сданных лабораторных работ отдельного студента\n" +
+                        "4. Таблица успеваемости отдельного студента\n" +
+                        "5. Изменить информацию о студенте\n" +
+                        "6. Сохранить информацию о студентах в файл\n" +
+                        "7. Восстановить информацию из файла\n" +
+                        "8. Изменить оценку за задание у отдельного студента\n" +
+                        "9. выход\n" +
+                        "10. Добавление студента");
+                else if (var == 2)
+                    function.list_of_studs(studs, kol_studs);
+                else if (var == 3)
+                    function.list_full_labs(labs, kol_labs, kol_zadan);
+                else if (var == 4)
+                    function.table_of_progress(labs, kol_labs, kol_zadan);
+                else if (var == 5)
+                    function.edit(labs, kol_labs, kol_zadan);
+                else if (var == 6)
+                    function.save(labs, kol_studs, kol_labs, kol_zadan);
+                else if (var == 7)
+                {
+                    kol_studs = kol_studs_in_file;
+                    function.completion(2, studs, kol_studs, labs, kol_labs, kol_zadan);
+                }
+                else if (var == 8)
+                    function.edit_zadan(labs, kol_studs, kol_labs, kol_zadan);
+                else if (var == 9)
+                {
+                    flag = false;
+                }
+                else if (var == 10)
+                {
+                    Array.Resize(ref studs, kol_studs + 1);
+                    Array.Resize(ref labs, kol_studs + 1);
+                    function.add_stud(studs, kol_studs, labs, kol_labs, kol_zadan);
+                    kol_studs++;
+                }
+                else Console.WriteLine("Нет такой команды");
+            } while (flag);
+
+        }
+    }
+}
